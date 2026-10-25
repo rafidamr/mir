@@ -1,0 +1,12 @@
+/refs
+.claude/settings.local.json
+node_modules/
+.env
+.env.*
+!.env.example
+data/raw/
+.cache/
+dist/
+.next/
+*.log
+.DS_Store

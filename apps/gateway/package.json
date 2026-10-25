@@ -1,0 +1,17 @@
+{
+  "name": "@mir/gateway",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "data:prepare": "node scripts/prepare-data.ts",
+    "data:benchmark": "node scripts/vote-benchmark.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "4.3.1"
+  },
+  "devDependencies": {
+    "csv-parse": "7.0.3"
+  }
+}
