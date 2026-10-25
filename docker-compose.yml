@@ -1,0 +1,20 @@
+# Local database for development and tests: docker compose up -d db
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: mir
+      POSTGRES_PASSWORD: mir
+      POSTGRES_DB: mir
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mir"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
