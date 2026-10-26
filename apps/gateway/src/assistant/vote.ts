@@ -47,7 +47,7 @@ export function voteOnIntent(
   return {
     intent: winner.intent,
     confidence: total > 0 ? winner.weight / total : 0,
-    topSimilarity: closest.similarity, // TODO: why needed?
+    topSimilarity: closest.similarity,
     voters: ballots.length,
     tally,
   }
