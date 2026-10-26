@@ -9,5 +9,6 @@ data/raw/
 dist/
 .next/
 next-env.d.ts
+*.tsbuildinfo
 *.log
 .DS_Store
