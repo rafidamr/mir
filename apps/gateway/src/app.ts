@@ -1,11 +1,13 @@
 import { randomUUID } from 'node:crypto'
 import { Hono } from 'hono'
+import { streamSSE } from 'hono/streaming'
 import { z } from 'zod'
-import type { Assistant, AssistantReply } from './assistant/types.ts'
+import type { Assistant } from './assistant/assistant.ts'
 import type { Database } from './db/client.ts'
 import { findTenantByKey, recordRequest, usageFor, useOneRequest } from './db/queries.ts'
 import type { NewRequest, Tenant } from './db/schema.ts'
 import { ApiError } from './http/errors.ts'
+import { AllModelsFailedError } from './router/router.ts'
 
 const AssistantRequest = z.object({
   message: z
@@ -77,19 +79,43 @@ export function createApp({ db, assistant }: AppDependencies) {
       )
     }
 
-    const id = randomUUID()
-    const latencyMs = () => Math.round(performance.now() - started)
-    let reply: AssistantReply
-    try {
-      reply = await assistant.reply(input.data.message, tenant)
-    } catch (error) {
-      await record({ id, tenantId: tenant.id, outcome: 'failed', latencyMs: latencyMs() })
-      throw error
-    }
-    const { answer, ...measured } = reply
-    const row = { id, tenantId: tenant.id, ...measured, latencyMs: latencyMs() }
-    await record(row)
-    return c.json({ ...row, answer })
+    // From here on the answer streams back as events: details, text..., then done (or error).
+    return streamSSE(c, async (stream) => {
+      const send = (event: string, data: unknown) =>
+        stream.writeSSE({ event, data: JSON.stringify(data) })
+      const stopped = new AbortController()
+      stream.onAbort(() => stopped.abort())
+      const row: NewRequest = {
+        id: randomUUID(),
+        tenantId: tenant.id,
+        outcome: 'failed',
+        latencyMs: 0,
+      }
+
+      try {
+        const details = await assistant.lookUp(input.data.message)
+        await send('details', details)
+        const answer = await assistant.answer(input.data.message, details, tenant, stopped.signal)
+        row.model = answer.model
+        row.fallbackReason = answer.fallbackReason
+        try {
+          for await (const text of answer.text) await send('text', { text })
+          row.outcome = answer.outcome
+        } finally {
+          Object.assign(row, answer.usage())
+        }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        if (error instanceof AllModelsFailedError) row.fallbackReason = message
+        else console.error(`Request ${row.id} failed:`, error)
+        await send('error', { message })
+      }
+
+      row.latencyMs = Math.round(performance.now() - started)
+      await record(row)
+      const { tenantId: _, ...done } = row
+      await send('done', done)
+    })
   })
 
   app.get('/v1/usage', async (c) => c.json(await databaseStep(() => usageFor(db, c.var.tenant.id))))

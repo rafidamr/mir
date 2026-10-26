@@ -1,10 +1,16 @@
 import { eq } from 'drizzle-orm'
 import { afterAll, beforeEach, describe, expect, it } from 'vitest'
 import { createApp } from '../src/app.ts'
-import type { Assistant } from '../src/assistant/types.ts'
 import { createDatabase } from '../src/db/client.ts'
 import { requests } from '../src/db/schema.ts'
-import { addTenant, connectTestDatabase, fakeAssistant, resetDatabase } from './helpers.ts'
+import { AllModelsFailedError } from '../src/router/router.ts'
+import {
+  addTenant,
+  connectTestDatabase,
+  fakeAssistant,
+  readEvents,
+  resetDatabase,
+} from './helpers.ts'
 
 const { sql, db } = connectTestDatabase()
 afterAll(() => sql.end())
@@ -103,14 +109,21 @@ describe('quota', () => {
   })
 })
 
-describe('recording', () => {
-  it('saves each answered request with its model, tokens, cost and latency', async () => {
+describe('streaming and recording', () => {
+  it('streams details, then the answer, then done, and records the request', async () => {
     const { apiKey } = await addTenant(db)
     const response = await ask(createApp({ db, assistant: fakeAssistant() }), apiKey, {
       message: 'I want to cancel my order',
     })
-    const { id } = (await response.json()) as { id: string }
-    const [row] = await db.select().from(requests).where(eq(requests.id, id))
+    const events = await readEvents(response)
+    expect(events.map((e) => e.event)).toEqual(['details', 'text', 'text', 'done'])
+    const done = events.at(-1)?.data
+    expect(done).toMatchObject({ outcome: 'answered', model: 'test-model', costUsd: 0.000536 })
+
+    const [row] = await db
+      .select()
+      .from(requests)
+      .where(eq(requests.id, String(done?.id)))
     expect(row).toMatchObject({
       tenantId: 'acme',
       outcome: 'answered',
@@ -123,22 +136,41 @@ describe('recording', () => {
     expect(row?.latencyMs).toBeGreaterThanOrEqual(0)
   })
 
-  it('records a failed request when the assistant breaks', async () => {
+  it('sends an error and records a failed request when no model can answer', async () => {
     const { apiKey } = await addTenant(db)
-    const broken: Assistant = {
-      reply: () => Promise.reject(new Error('boom')),
-    }
-    const response = await ask(createApp({ db, assistant: broken }), apiKey, { message: 'hi' })
-    expect(response.status).toBe(500)
-    const rows = await db.select().from(requests)
-    expect(rows).toMatchObject([{ outcome: 'failed', model: null, costUsd: 0 }])
+    const reason = 'No model could answer. free: rate limit exceeded; paid: server error'
+    const assistant = fakeAssistant(() => Promise.reject(new AllModelsFailedError(reason)))
+    const response = await ask(createApp({ db, assistant }), apiKey, { message: 'hi' })
+    const events = await readEvents(response)
+    expect(events.map((e) => e.event)).toEqual(['details', 'error', 'done'])
+    expect(events[1]?.data).toEqual({ message: reason })
+    expect(await db.select().from(requests)).toMatchObject([
+      { outcome: 'failed', model: null, fallbackReason: reason, costUsd: 0 },
+    ])
+  })
+
+  it('sends an error and records a failed request when the answer breaks off part-way', async () => {
+    const { apiKey } = await addTenant(db)
+    const assistant = fakeAssistant({
+      text: (async function* () {
+        yield 'You can cancel the order '
+        throw new Error('connection lost')
+      })(),
+    })
+    const response = await ask(createApp({ db, assistant }), apiKey, { message: 'hi' })
+    const events = await readEvents(response)
+    expect(events.map((e) => e.event)).toEqual(['details', 'text', 'error', 'done'])
+    expect(await db.select().from(requests)).toMatchObject([
+      { outcome: 'failed', model: 'test-model', inputTokens: 620 },
+    ])
   })
 
   it('reports usage: quota, used, remaining, cost and recent requests', async () => {
     const { apiKey } = await addTenant(db, { requestQuota: 10 })
     const app = createApp({ db, assistant: fakeAssistant() })
-    await ask(app, apiKey, { message: 'one' })
-    await ask(app, apiKey, { message: 'two' })
+    // Reading each stream to the end lets the request finish and be recorded.
+    await (await ask(app, apiKey, { message: 'one' })).text()
+    await (await ask(app, apiKey, { message: 'two' })).text()
     const response = await app.request('/v1/usage', {
       headers: { authorization: `Bearer ${apiKey}` },
     })
