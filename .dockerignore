@@ -1,0 +1,14 @@
+# Keep the package small, and keep settings and private files out of it.
+.git
+.claude
+.cache
+.env
+.env.*
+node_modules
+refs
+docs
+eval
+data/raw
+data/eval
+apps/*/test
+apps/*/scripts
