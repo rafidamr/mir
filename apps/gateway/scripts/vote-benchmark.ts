@@ -8,18 +8,18 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { parseArgs } from 'node:util'
-import { parseJsonl } from '../src/lib/jsonl.ts'
 import {
   createEmbedder,
   EMBEDDING_MODELS,
   type EmbeddingModelName,
-} from '../src/retrieval/embedder.ts'
+} from '../src/assistant/embedder.ts'
 import {
   createKnowledgeBase,
   loadKnowledgeBase,
   type Match,
-} from '../src/retrieval/knowledge-base.ts'
-import { type IntentVote, voteOnIntent } from '../src/retrieval/vote.ts'
+} from '../src/assistant/knowledge-base.ts'
+import { type IntentVote, voteOnIntent } from '../src/assistant/vote.ts'
+import { parseJsonl } from '../src/lib/jsonl.ts'
 import { type BitextRow, NEAR_COPY_SIMILARITY } from './lib/dataset.ts'
 import { embedInBatches, flatten } from './lib/embed.ts'
 import { paths } from './lib/paths.ts'

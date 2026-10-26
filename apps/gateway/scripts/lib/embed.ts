@@ -1,4 +1,4 @@
-import type { Embedder } from '../../src/retrieval/embedder.ts'
+import type { Embedder } from '../../src/assistant/embedder.ts'
 
 /** Embeds many texts in small batches (big batches waste memory on padding), showing progress. */
 export async function embedInBatches(

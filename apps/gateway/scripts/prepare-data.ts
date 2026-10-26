@@ -12,13 +12,13 @@ import { existsSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { parse } from 'csv-parse/sync'
-import { toJsonl } from '../src/lib/jsonl.ts'
-import { createEmbedder, EMBEDDING_MODELS } from '../src/retrieval/embedder.ts'
+import { createEmbedder, EMBEDDING_MODELS } from '../src/assistant/embedder.ts'
 import {
   createKnowledgeBase,
   type KbEntry,
   type KbManifest,
-} from '../src/retrieval/knowledge-base.ts'
+} from '../src/assistant/knowledge-base.ts'
+import { toJsonl } from '../src/lib/jsonl.ts'
 import {
   type BitextRow,
   type DatasetSplit,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createKnowledgeBase, type KbEntry } from '../src/retrieval/knowledge-base.ts'
+import { createKnowledgeBase, type KbEntry } from '../src/assistant/knowledge-base.ts'
 
 function entry(id: string, intent: string): KbEntry {
   return { id, intent, category: 'TEST', instruction: id, response: id }

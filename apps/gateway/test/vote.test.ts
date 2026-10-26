@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import type { KbEntry, Match } from '../src/retrieval/knowledge-base.ts'
-import { voteOnIntent } from '../src/retrieval/vote.ts'
+import type { KbEntry, Match } from '../src/assistant/knowledge-base.ts'
+import { voteOnIntent } from '../src/assistant/vote.ts'
 
 function match(intent: string, similarity: number): Match {
   const entry: KbEntry = {
