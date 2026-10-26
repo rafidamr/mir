@@ -125,7 +125,7 @@ describe('streaming and recording', () => {
       .from(requests)
       .where(eq(requests.id, String(done?.id)))
     expect(row).toMatchObject({
-      tenantId: 'acme',
+      tenantId: 'tenant1',
       outcome: 'answered',
       model: 'test-model',
       fallbackReason: null,

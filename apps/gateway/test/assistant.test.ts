@@ -44,8 +44,8 @@ const embedder: Embedder = {
 }
 
 const tenant: Tenant = {
-  id: 'acme',
-  name: 'Acme',
+  id: 'tenant1',
+  name: 'Tenant One',
   apiKeyHash: 'x',
   allowsTraining: true,
   requestQuota: 10,
