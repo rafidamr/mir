@@ -1,0 +1,99 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  color: #1f2328;
+  background: #fff;
+}
+
+header {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #d0d7de;
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 3rem;
+}
+
+.chat {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 800px) {
+  .chat {
+    grid-template-columns: 1fr;
+  }
+}
+
+form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+label {
+  display: grid;
+  gap: 0.25rem;
+}
+
+select,
+textarea,
+button {
+  font: inherit;
+  padding: 0.4rem;
+}
+
+button {
+  justify-self: start;
+  padding: 0.4rem 1.2rem;
+}
+
+.answer {
+  min-height: 6rem;
+  padding: 0.75rem;
+  white-space: pre-wrap;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+}
+
+.error {
+  color: #cf222e;
+}
+
+dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.35rem 1rem;
+}
+
+dt {
+  font-weight: 600;
+}
+
+dd {
+  margin: 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
+
+th,
+td {
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid #d0d7de;
+}

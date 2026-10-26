@@ -8,5 +8,6 @@ data/raw/
 .cache/
 dist/
 .next/
+next-env.d.ts
 *.log
 .DS_Store
