@@ -11,9 +11,9 @@ import { tenants } from '../src/db/schema.ts'
 import { generateApiKey, hashApiKey } from '../src/lib/api-keys.ts'
 
 const DEMO_TENANTS = [
-  { id: 'acme', name: 'Acme', allowsTraining: true, requestQuota: 1000 },
-  { id: 'globex', name: 'Globex', allowsTraining: false, requestQuota: 1000 },
-  { id: 'tiny', name: 'Tiny', allowsTraining: true, requestQuota: 3 },
+  { id: 'tenant1', name: 'Tenant One', allowsTraining: true, requestQuota: 1000 },
+  { id: 'tenant2', name: 'Tenant Two', allowsTraining: false, requestQuota: 1000 },
+  { id: 'tenant3', name: 'Tenant Three', allowsTraining: true, requestQuota: 3 },
   { id: 'eval', name: 'Evaluation', allowsTraining: true, requestQuota: 5000 },
 ]
 

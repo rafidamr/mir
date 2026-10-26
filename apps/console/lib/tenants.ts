@@ -11,7 +11,6 @@ export function gatewayUrl(): string {
   return url.replace(/\/$/, '')
 }
 
-/** TENANT_KEYS is JSON, for example {"acme": "mir_...", "globex": "mir_..."}. */
 export function tenants(): Tenant[] {
   const keys = JSON.parse(process.env.TENANT_KEYS ?? '{}') as Record<string, string>
   return Object.entries(keys).map(([id, key]) => ({ id, key, maskedKey: `${key.slice(0, 8)}…` }))
