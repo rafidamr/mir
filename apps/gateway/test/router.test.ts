@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { createModels } from '../src/router/models.ts'
-import { AllModelsFailedError, createRouter, type RouterModel } from '../src/router/router.ts'
+import { createLLMClients } from '../src/router/llm-clients.ts'
+import { AllModelsFailedError, createRouter } from '../src/router/router.ts'
+import type { LLMClient } from '../src/router/types.ts'
 
 const request = {
   prompt: { instructions: 'You are a support assistant.', message: 'I want to cancel my order' },
@@ -13,7 +14,7 @@ function fake(
   id: string,
   pieces: string[],
   end: 'finish' | 'hang' | Error = 'finish',
-  extra: Partial<RouterModel> = {},
+  extra: Partial<LLMClient> = {},
 ) {
   let calls = 0
   return {
@@ -55,7 +56,7 @@ const isJunk = (words: string) => (/[a-z]{3}/i.test(words) ? null : 'looks like 
 describe('router', () => {
   it('uses the first model when it answers', async () => {
     const backup = paid(answer)
-    const routed = await createRouter({ models: [free(answer), backup] }).route(request)
+    const routed = await createRouter({ llmClients: [free(answer), backup] }).route(request)
     expect(routed).toMatchObject({ model: 'free', fallbackReason: null })
     expect(await readAll(routed.text)).toBe(answer.join(''))
     expect(routed.usage()).toEqual({ inputTokens: 1200, outputTokens: 150, costUsd: 0 })
@@ -72,29 +73,29 @@ describe('router', () => {
     ],
     ['sends nothing', free([]), 'free: empty answer'],
   ])('switches to the next model when the first one %s', async (_, first, reason) => {
-    const router = createRouter({ models: [first, paid(answer)], firstWordsTimeoutMs: 50 })
-    const routed = await router.route({ ...request, checkFirstWords: isJunk })
+    const router = createRouter({ llmClients: [first, paid(answer)], firstWordsTimeoutMs: 50 })
+    const routed = await router.route({ ...request, doSanityCheck: isJunk })
     expect(routed).toMatchObject({ model: 'paid', fallbackReason: reason })
     expect(await readAll(routed.text)).toBe(answer.join(''))
   })
 
   it('lets the last model start slowly, since there is nothing to switch to', async () => {
     const backup = paid(answer)
-    const slowToStart: RouterModel = {
+    const slowToStart: LLMClient = {
       ...backup,
       async *call(prompt, signal) {
         await new Promise((resolve) => setTimeout(resolve, 100))
         yield* backup.call(prompt, signal)
       },
     }
-    const router = createRouter({ models: [slowToStart], firstWordsTimeoutMs: 50 })
+    const router = createRouter({ llmClients: [slowToStart], firstWordsTimeoutMs: 50 })
     const routed = await router.route(request)
     expect(await readAll(routed.text)).toBe(answer.join(''))
   })
 
   it('lists every reason when no model can answer', async () => {
     const router = createRouter({
-      models: [free([], new Error('rate limit exceeded')), paid([], new Error('server error'))],
+      llmClients: [free([], new Error('rate limit exceeded')), paid([], new Error('server error'))],
     })
     const failure = router.route(request)
     await expect(failure).rejects.toBeInstanceOf(AllModelsFailedError)
@@ -103,7 +104,7 @@ describe('router', () => {
 
   it('skips a model that may train on data when the tenant does not allow training', async () => {
     const first = free(answer)
-    const routed = await createRouter({ models: [first, paid(answer)] }).route({
+    const routed = await createRouter({ llmClients: [first, paid(answer)] }).route({
       ...request,
       allowsTraining: false,
     })
@@ -115,7 +116,7 @@ describe('router', () => {
   it('skips a model for 60 seconds after it fails 3 times in a row', async () => {
     let clock = 0
     const first = free([], new Error('rate limit exceeded'))
-    const router = createRouter({ models: [first, paid(answer)], now: () => clock })
+    const router = createRouter({ llmClients: [first, paid(answer)], now: () => clock })
     for (let i = 0; i < 3; i++) await readAll((await router.route(request)).text)
 
     const skipped = await router.route(request)
@@ -129,7 +130,7 @@ describe('router', () => {
   })
 
   it('works out the cost from the tokens and the prices', async () => {
-    const routed = await createRouter({ models: [paid(answer)] }).route(request)
+    const routed = await createRouter({ llmClients: [paid(answer)] }).route(request)
     await readAll(routed.text)
     // 1,200 × $0.30 + 100 answer tokens × $2.50 + 50 reasoning tokens × $2.50, per million.
     expect(routed.usage()).toEqual({ inputTokens: 1200, outputTokens: 150, costUsd: 0.000735 })
@@ -138,7 +139,7 @@ describe('router', () => {
   it('does not switch once the answer has started', async () => {
     const backup = paid(answer)
     const router = createRouter({
-      models: [
+      llmClients: [
         free(['Sure, I can help you cancel your order. '], new Error('connection lost')),
         backup,
       ],
@@ -151,7 +152,7 @@ describe('router', () => {
 
   it('stops an answer that runs past the total time limit', async () => {
     const router = createRouter({
-      models: [free(['Sure, I can help you cancel your order. '], 'hang')],
+      llmClients: [free(['Sure, I can help you cancel your order. '], 'hang')],
       totalTimeoutMs: 100,
     })
     const routed = await router.route(request)
@@ -166,7 +167,7 @@ describe('createModels', () => {
       training_allowed: trainingAllowed,
       cost: { input: price, output: price, reasoning: price },
     })
-    const models = createModels({
+    const models = createLLMClients({
       DATABASE_URL: 'postgres://localhost/x',
       PORT: 8080,
       OPENROUTER_API_KEY: 'test',

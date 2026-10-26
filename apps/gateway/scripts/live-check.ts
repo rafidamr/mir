@@ -8,15 +8,16 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { loadConfig } from '../src/config.ts'
 import { parseJsonl } from '../src/lib/jsonl.ts'
-import { createModels } from '../src/router/models.ts'
-import { costOf, type RouterModel, type Tokens } from '../src/router/router.ts'
+import { createLLMClients } from '../src/router/llm-clients.ts'
+import { costOf } from '../src/router/router.ts'
+import type { LLMClient, Tokens } from '../src/router/types.ts'
 import type { BitextRow } from './lib/dataset.ts'
 import { paths } from './lib/paths.ts'
 
 const INSTRUCTIONS =
   'You are a customer support assistant. Reply to the customer in two or three short sentences.'
 
-const models = createModels(loadConfig())
+const models = createLLMClients(loadConfig())
 const questions = parseJsonl<BitextRow>(
   await readFile(path.join(paths.evalDir, 'practice.jsonl'), 'utf8'),
 )
@@ -44,7 +45,7 @@ for (const model of models) {
   }
 }
 
-async function ask(model: RouterModel, question: string) {
+async function ask(model: LLMClient, question: string) {
   const started = performance.now()
   let firstWordsMs = 0
   let text = ''

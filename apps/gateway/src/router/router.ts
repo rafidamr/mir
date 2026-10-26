@@ -1,53 +1,4 @@
-/** What a model is given: how to behave (instructions) and the customer's message. */
-export interface Prompt {
-  instructions: string
-  message: string
-}
-
-/** What a model sends while it answers: pieces of text, then its token counts. */
-export type ModelEvent = { type: 'text'; text: string } | ({ type: 'usage' } & Tokens)
-
-export interface Tokens {
-  inputTokens: number
-  /** All output tokens, including hidden "thinking" (reasoning) tokens. */
-  outputTokens: number
-  reasoningTokens: number
-}
-
-/** US dollars per million tokens. */
-export interface ModelCost {
-  input: number
-  output: number
-  reasoning: number
-}
-
-export interface RouterModel {
-  id: string
-  cost: ModelCost
-  /** Whether the provider may train on what it's sent. Skipped for tenants that say no. */
-  trainingAllowed: boolean
-  /** Starts a streamed answer. The call stops when the signal is aborted. */
-  call: (prompt: Prompt, signal: AbortSignal) => AsyncIterable<ModelEvent>
-}
-
-export interface RouteRequest {
-  prompt: Prompt
-  allowsTraining: boolean
-  /** Returns why the first words can't be used, or null when they're fine. */
-  checkFirstWords?: (firstWords: string) => string | null
-  /** Aborting it stops the model, e.g. when the user goes away. */
-  signal?: AbortSignal
-}
-
-export interface RoutedAnswer {
-  model: string
-  /** Why earlier models were passed over, or null when the first one answered. */
-  fallbackReason: string | null
-  /** The answer as it's written. */
-  text: AsyncIterable<string>
-  /** Tokens and cost, complete once `text` has been read to the end. */
-  usage: () => { inputTokens: number; outputTokens: number; costUsd: number }
-}
+import type { LLMClient, ModelCost, RouterRequest, RouterResponse, Tokens } from './types.ts'
 
 export class AllModelsFailedError extends Error {}
 
@@ -57,13 +8,13 @@ const FAILURES_BEFORE_SKIP = 3
 const SKIP_FOR_MS = 60_000
 
 export function createRouter({
-  models,
+  llmClients,
   firstWordsTimeoutMs = 3000,
   totalTimeoutMs = 30_000,
   now = Date.now,
 }: {
   /** In the order to try them. */
-  models: RouterModel[]
+  llmClients: LLMClient[]
   firstWordsTimeoutMs?: number
   totalTimeoutMs?: number
   now?: () => number
@@ -71,9 +22,9 @@ export function createRouter({
   const failuresInARow = new Map<string, number>()
   const skippedUntil = new Map<string, number>()
 
-  async function route(request: RouteRequest): Promise<RoutedAnswer> {
+  async function route(request: RouterRequest): Promise<RouterResponse> {
     const reasons: string[] = []
-    const candidates = models.filter((m) => request.allowsTraining || !m.trainingAllowed)
+    const candidates = llmClients.filter((m) => request.allowsTraining || !m.trainingAllowed)
     for (const [index, model] of candidates.entries()) {
       if ((skippedUntil.get(model.id) ?? 0) > now()) {
         reasons.push(`${model.id}: skipped after ${FAILURES_BEFORE_SKIP} failures in a row`)
@@ -103,7 +54,7 @@ export function createRouter({
    * Starts the model and checks its first words. Throws if they don't arrive in time or can't be
    * used. After that the answer is handed over and can't be switched: the user is about to see it.
    */
-  async function start(model: RouterModel, request: RouteRequest, timeToStartMs: number) {
+  async function start(model: LLMClient, request: RouterRequest, timeToStartMs: number) {
     const controller = new AbortController()
     request.signal?.addEventListener('abort', () => controller.abort(), { once: true })
     const totalTimer = setTimeout(() => controller.abort(), totalTimeoutMs)
@@ -138,8 +89,7 @@ export function createRouter({
       clearTimeout(firstWordsTimer)
     }
 
-    const problem =
-      firstWords.trim() === '' ? 'empty answer' : request.checkFirstWords?.(firstWords)
+    const problem = firstWords.trim() === '' ? 'empty answer' : request.doSanityCheck?.(firstWords)
     if (problem) {
       stop()
       throw new Error(problem)
