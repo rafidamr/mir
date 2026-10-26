@@ -1,6 +1,6 @@
 import path from 'node:path'
 import { sql } from 'drizzle-orm'
-import { generateApiKey, hashApiKey } from '../src/api-keys.ts'
+import { generateApiKey, hashApiKey } from '../src/lib/api-keys.ts'
 import type { Assistant, AssistantReply } from '../src/assistant/types.ts'
 import { createDatabase, type Database } from '../src/db/client.ts'
 import { tenants } from '../src/db/schema.ts'

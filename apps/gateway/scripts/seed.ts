@@ -4,10 +4,11 @@
  *
  *   npm run db:seed
  */
-import { generateApiKey, hashApiKey } from '../src/api-keys.ts'
+
 import { loadConfig } from '../src/config.ts'
 import { createDatabase } from '../src/db/client.ts'
 import { tenants } from '../src/db/schema.ts'
+import { generateApiKey, hashApiKey } from '../src/lib/api-keys.ts'
 
 const DEMO_TENANTS = [
   { id: 'acme', name: 'Acme', allowsTraining: true, requestQuota: 1000 },

@@ -1,5 +1,5 @@
 import { and, desc, eq, lt, sql, sum } from 'drizzle-orm'
-import { hashApiKey } from '../api-keys.ts'
+import { hashApiKey } from '../lib/api-keys.ts'
 import type { Database } from './client.ts'
 import { type NewRequest, requests, type Tenant, tenants } from './schema.ts'
 
