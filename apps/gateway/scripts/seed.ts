@@ -16,7 +16,7 @@ const DEMO_TENANTS = [
   { id: 'eval', name: 'Evaluation', allowsTraining: true, requestQuota: 5000 },
 ]
 
-const { sql, db } = createDatabase(loadConfig().databaseUrl)
+const { sql, db } = createDatabase(loadConfig().DATABASE_URL)
 for (const tenant of DEMO_TENANTS) {
   const apiKey = generateApiKey()
   const values = { ...tenant, apiKeyHash: hashApiKey(apiKey), requestsUsed: 0 }
