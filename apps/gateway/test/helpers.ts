@@ -23,7 +23,13 @@ export async function addTenant(
   overrides: Partial<{ id: string; allowsTraining: boolean; requestQuota: number }> = {},
 ) {
   const apiKey = generateApiKey()
-  const tenant = { id: 'tenant1', name: 'Tenant One', allowsTraining: true, requestQuota: 100, ...overrides }
+  const tenant = {
+    id: 'tenant1',
+    name: 'Tenant One',
+    allowsTraining: true,
+    requestQuota: 100,
+    ...overrides,
+  }
   await db.insert(tenants).values({ ...tenant, apiKeyHash: hashApiKey(apiKey) })
   return { ...tenant, apiKey }
 }
