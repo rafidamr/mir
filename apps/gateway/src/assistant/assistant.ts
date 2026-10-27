@@ -106,7 +106,7 @@ function instructionsFor({ intent, matches }: Details): string {
     `The customer's request is about: ${intent.replaceAll('_', ' ')}.`,
     'Base your reply on these example replies from our support team:',
     ...examples,
-    'Keep the reply under 120 words. Keep placeholders like {{Order Number}} exactly as they are. Do not make up policies, prices or dates that are not in the examples.',
+    'Keep the reply under 200 words. Keep placeholders like {{Order Number}} exactly as they are. Do not make up policies, prices or dates that are not in the examples.',
   ].join('\n\n')
 }
 
