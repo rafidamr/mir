@@ -42,7 +42,7 @@ const UNSURE_BELOW = 0.4
 const EXAMPLES = 3
 
 export const REFUSAL =
-  "I'm sorry, I can't help with that here. Please connect with a human agent by calling +62-888-000-000"
+  "I'm sorry, I can't help with that here. Please connect with a human agent by calling {{Customer Support Phone Number}}"
 
 export function createAssistant({
   kb,
