@@ -14,7 +14,7 @@ const AssistantRequest = z.object({
     .string({ error: 'message is required and must be text' })
     .trim()
     .min(1, 'message must not be empty')
-    .max(2000, 'message must be at most 2,000 characters'),
+    .max(200, 'message must be at most 200 characters'),
 })
 
 export interface AppDependencies {

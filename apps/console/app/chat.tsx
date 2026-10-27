@@ -85,7 +85,7 @@ export function Chat({ tenants }: { tenants: Array<{ id: string; maskedKey: stri
         value={draft}
         onChange={(e) => setDraft(e.target.value)}
         onKeyDown={sendOnEnter}
-        maxLength={2000}
+        maxLength={200}
         rows={started ? 1 : 2}
         placeholder={started ? 'Enter a new message...' : 'How can I help you?'}
         aria-label="Customer message"

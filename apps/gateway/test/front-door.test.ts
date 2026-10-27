@@ -60,7 +60,7 @@ describe('input', () => {
     ['a missing message', {}],
     ['an empty message', { message: '   ' }],
     ['a message that is not text', { message: 42 }],
-    ['a message over 2,000 characters', { message: 'a'.repeat(2001) }],
+    ['a message over 200 characters', { message: 'a'.repeat(201) }],
   ])('rejects %s without calling the assistant', async (_, body) => {
     const { apiKey } = await addTenant(db)
     const assistant = fakeAssistant()
