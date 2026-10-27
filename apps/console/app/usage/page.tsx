@@ -29,7 +29,7 @@ export default async function UsagePage() {
   )
 
   return (
-    <>
+    <main className="page">
       <h1>Usage</h1>
       <table>
         <thead>
@@ -99,7 +99,7 @@ export default async function UsagePage() {
           </section>
         ),
       )}
-    </>
+    </main>
   )
 }
 
