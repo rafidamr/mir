@@ -6,6 +6,23 @@ import type { ModelEvent } from '../src/router/types.ts'
 
 const prompt = { instructions: 'You are a support assistant.', message: 'Cancel my order' }
 
+/** A short answer and its token counts, including 50 hidden thinking tokens. */
+const shortAnswer: LanguageModelV4StreamPart[] = [
+  { type: 'stream-start', warnings: [] },
+  { type: 'text-start', id: '1' },
+  { type: 'text-delta', id: '1', delta: 'Sure, ' },
+  { type: 'text-delta', id: '1', delta: 'I can help.' },
+  { type: 'text-end', id: '1' },
+  {
+    type: 'finish',
+    finishReason: { unified: 'stop', raw: 'stop' },
+    usage: {
+      inputTokens: { total: 120, noCache: 120, cacheRead: 0, cacheWrite: 0 },
+      outputTokens: { total: 80, text: 30, reasoning: 50 },
+    },
+  },
+]
+
 /** A fake AI SDK model that sends these messages, the way a provider would. */
 function providerSends(parts: LanguageModelV4StreamPart[]) {
   return new MockLanguageModelV4({
@@ -21,21 +38,7 @@ async function collect(events: AsyncIterable<ModelEvent>): Promise<ModelEvent[]>
 
 describe('callAiSdk', () => {
   it('passes on the text and the token counts, including hidden thinking tokens', async () => {
-    const model = providerSends([
-      { type: 'stream-start', warnings: [] },
-      { type: 'text-start', id: '1' },
-      { type: 'text-delta', id: '1', delta: 'Sure, ' },
-      { type: 'text-delta', id: '1', delta: 'I can help.' },
-      { type: 'text-end', id: '1' },
-      {
-        type: 'finish',
-        finishReason: { unified: 'stop', raw: 'stop' },
-        usage: {
-          inputTokens: { total: 120, noCache: 120, cacheRead: 0, cacheWrite: 0 },
-          outputTokens: { total: 80, text: 30, reasoning: 50 },
-        },
-      },
-    ])
+    const model = providerSends(shortAnswer)
     const events = await collect(callAiSdk(model)(prompt, new AbortController().signal))
 
     expect(events).toEqual([
@@ -43,6 +46,13 @@ describe('callAiSdk', () => {
       { type: 'text', text: 'I can help.' },
       { type: 'usage', inputTokens: 120, outputTokens: 80, reasoningTokens: 50 },
     ])
+  })
+
+  it('sends the vendor the 500-token cap on the answer', async () => {
+    const model = providerSends(shortAnswer)
+    await collect(callAiSdk(model)(prompt, new AbortController().signal))
+
+    expect(model.doStreamCalls[0]?.maxOutputTokens).toBe(500)
   })
 
   it('treats a provider error that arrives after a successful start as a failure', async () => {
