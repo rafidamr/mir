@@ -16,7 +16,9 @@
     "format": "biome format --write .",
     "data:prepare": "npm run data:prepare -w @mir/gateway",
     "data:benchmark": "npm run data:benchmark -w @mir/gateway --",
-    "check-deployment": "npm run check-deployment -w @mir/gateway --"
+    "check-deployment": "npm run check-deployment -w @mir/gateway --",
+    "eval": "npm run eval -w @mir/gateway",
+    "grade": "npm run grade -w @mir/gateway"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.3",

@@ -13,7 +13,9 @@
     "live-check": "node --env-file-if-exists=../../.env scripts/live-check.ts",
     "check-deployment": "node --env-file=../../.env.production scripts/check-deployment.ts",
     "test": "vitest run",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "eval": "node --env-file-if-exists=../../.env scripts/eval.ts",
+    "grade": "node scripts/grade.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "4.0.105",
