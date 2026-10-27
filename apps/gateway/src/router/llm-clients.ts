@@ -33,7 +33,7 @@ function totalPrice({ cost }: LLMClient): number {
 }
 
 /** Calls a model through the Vercel AI SDK, passing on its text and token counts. */
-function callAiSdk(model: LanguageModel): LLMClient['call'] {
+export function callAiSdk(model: LanguageModel): LLMClient['call'] {
   return async function* ({ instructions, message }, signal) {
     const result = streamText({
       model,
