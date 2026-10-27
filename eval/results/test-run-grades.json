@@ -1,1 +1,415 @@
-[]
+[
+  {
+    "caseId": "bitext-00480",
+    "model": "gemini-3.5-flash-lite",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply covers every part of the reference: the same five cancellation steps (sign in, go to the orders section, find the order, choose the cancel option, follow any further prompts) and the same support hours, phone and live chat options, using the correct placeholders and adding no unsupported facts."
+  },
+  {
+    "caseId": "bitext-01068",
+    "model": "gemini-3.5-flash-lite",
+    "score": 5,
+    "madeUp": false,
+    "reason": "Like the reference, the reply acknowledges the request to remove an article from {{Order Number}} and asks which item to remove, without inventing facts; it only lacks the reference's empathy for the customer's frustration and ends with a slightly redundant question."
+  },
+  {
+    "caseId": "bitext-01068",
+    "model": "openai/gpt-6-luna",
+    "score": 4,
+    "madeUp": false,
+    "reason": "The reply correctly asks which item to remove from order {{Order Number}} so the change can be made, as the reference does, but it doesn't acknowledge the customer's obvious frustration."
+  },
+  {
+    "caseId": "bitext-02528",
+    "model": "gemini-3.5-flash-lite",
+    "score": 5,
+    "madeUp": false,
+    "reason": "Like the reference, the reply acknowledges the request and asks for the new address, and it adds no unsupported details; saying it will 'guide you through the process' instead of updating the address directly is a harmless wording difference."
+  },
+  {
+    "caseId": "bitext-02528",
+    "model": "openai/gpt-6-luna",
+    "score": 4,
+    "madeUp": true,
+    "reason": "The reply correctly asks for the new address like the reference does, but it also makes up a self-service option under \"Account Settings\" or \"Your Profile\" that the reference doesn't support, which could send the customer looking for menus that may not exist."
+  },
+  {
+    "caseId": "bitext-03459",
+    "model": "gemini-3.5-flash-lite",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply gives the same key steps as the reference (log in, then go to the billing section to see the withdrawal charge), and its small additions, the mobile app and account settings, are harmless general guidance rather than invented facts."
+  },
+  {
+    "caseId": "bitext-03459",
+    "model": "openai/gpt-6-luna",
+    "score": 4,
+    "madeUp": false,
+    "reason": "The reply correctly tells the customer to log in and check the account's fees area, and its tip to review the terms is harmless, but it names an exact \"Withdrawal Fees\" section instead of the reference's billing or fees section, which is a little too specific and leaves out billing as a place to look."
+  },
+  {
+    "caseId": "bitext-04814",
+    "model": "gemini-3.5-flash-lite",
+    "score": 2,
+    "madeUp": false,
+    "reason": "The reply only acknowledges the request and promises to \"retrieve the details,\" which it never does and likely can't, and it never tells the customer how to view the invoice (log in, open the Invoices section, click the invoice number) as the reference does."
+  },
+  {
+    "caseId": "bitext-04814",
+    "model": "openai/gpt-6-luna",
+    "score": 4,
+    "madeUp": false,
+    "reason": "The reply correctly sends the customer to the \"Invoices\" section of their account dashboard, but it gives fewer steps than the reference (no explicit login or click-the-invoice step) and adds hedged, unconfirmed suggestions about downloading a copy and checking email."
+  },
+  {
+    "caseId": "bitext-05325",
+    "model": "gemini-3.5-flash-lite",
+    "score": 3,
+    "madeUp": true,
+    "reason": "The reply lists the correct payment methods and mentions the checkout page, but its main answer to \"where\" points to a made-up \"Payment Options\" section under a Help tab, and it names card brands (Visa, Mastercard, American Express) that the reference doesn't confirm and that could mislead the customer."
+  },
+  {
+    "caseId": "bitext-05325",
+    "model": "openai/gpt-6-luna",
+    "score": 4,
+    "madeUp": false,
+    "reason": "The reply gives the same five payment options as the reference and mentions checkout, but it first points to a \"Payment Methods\" Help section the reference doesn't confirm and only names checkout second, a small gap in precision; this pointer is hedged general advice rather than a specific invented fact."
+  },
+  {
+    "caseId": "bitext-05932",
+    "model": "gemini-3.5-flash-lite",
+    "score": 4,
+    "madeUp": false,
+    "reason": "The reply correctly lists common refund cases (defects, cancellation, unauthorized charges, non-delivery, plus a valid extra on duplicate charges) and notes that policies vary, but it leaves out the reference's event-cancellation case, only partly covers dissatisfaction, and doesn't suggest checking the terms, so there is a small gap."
+  },
+  {
+    "caseId": "bitext-05932",
+    "model": "openai/gpt-6-luna",
+    "score": 4,
+    "madeUp": false,
+    "reason": "The reply covers most of the reference's refund cases (defects, cancellation, unauthorized charges, non-delivery and event cancellation), says the seller's terms decide eligibility and offers more help, but it leaves out refunds for dissatisfaction and limits event refunds to events that aren't rescheduled, while the reference says rescheduled events may also qualify."
+  },
+  {
+    "caseId": "bitext-07222",
+    "model": "gemini-3.5-flash-lite",
+    "score": 4,
+    "madeUp": false,
+    "reason": "The reply explains how to file a reclamation and what to include, with placeholders for the contact channels, but it sends the customer to another channel instead of taking the details directly and leaves out supporting documents, so it is slightly less helpful than the reference."
+  },
+  {
+    "caseId": "bitext-07222",
+    "model": "openai/gpt-6-luna",
+    "score": 4,
+    "madeUp": false,
+    "reason": "The reply gives a workable way to file the reclamation and lists the key details to include, but it sends the customer to the website's contact channel instead of collecting the details directly as the reference does, and it leaves out supporting documents."
+  },
+  {
+    "caseId": "bitext-07232",
+    "model": "gemini-3.5-flash-lite",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply covers everything the reference does: it acknowledges the customer's frustration, apologizes, says complaints are taken seriously and asks for details (dates, names, {{Order Number}}) to move the complaint forward, and it invents no fees, deadlines or policies."
+  },
+  {
+    "caseId": "bitext-07232",
+    "model": "openai/gpt-6-luna",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply covers everything the reference does: it apologizes, acknowledges the complaint, says complaints are taken seriously and asks for details (dates, names, order numbers), all briefly and without inventing any policies or facts."
+  },
+  {
+    "caseId": "bitext-08895",
+    "model": "gemini-3.5-flash-lite",
+    "score": 4,
+    "madeUp": true,
+    "reason": "The reply answers the question with the same {{Customer Support Hours}} placeholder as the reference, but it also claims a Live Chat is available on the website, which the reference doesn't support and which could mislead the customer if the company has no such chat."
+  },
+  {
+    "caseId": "bitext-08895",
+    "model": "openai/gpt-6-luna",
+    "score": 4,
+    "madeUp": true,
+    "reason": "The reply answers the question with the {{Customer Support Hours}} placeholder, as the reference does, but it also says there is live chat on the website and a phone line, which the reference doesn't support and could send the customer looking for options that may not exist."
+  },
+  {
+    "caseId": "bitext-09265",
+    "model": "gemini-3.5-flash-lite",
+    "score": 4,
+    "madeUp": false,
+    "reason": "The reply acknowledges the request and promises to connect the customer with a representative, as the reference does, but it doesn't ask what the customer needs help with, which the reference uses to send them to the right person."
+  },
+  {
+    "caseId": "bitext-09265",
+    "model": "openai/gpt-6-luna",
+    "score": 4,
+    "madeUp": false,
+    "reason": "The reply agrees to connect the customer with someone and says nothing invented, but unlike the reference it doesn't ask what the customer wants to discuss so they can be sent to the right person."
+  },
+  {
+    "caseId": "bitext-10472",
+    "model": "gemini-3.5-flash-lite",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply asks for the same details as the reference (full name, email address and preferred username), promises step-by-step guidance and reassures the customer about privacy, without inventing any facts."
+  },
+  {
+    "caseId": "bitext-10472",
+    "model": "openai/gpt-6-luna",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply asks for the same details as the reference (full name, email address and username), says it will guide the customer through the next steps, and reassures them about privacy without adding anything that isn't supported."
+  },
+  {
+    "caseId": "bitext-11631",
+    "model": "gemini-3.5-flash-lite",
+    "score": 4,
+    "madeUp": false,
+    "reason": "The reply handles the request by offering help and giving general self-service steps, but it asks vaguely for \"specific details\" instead of the username or email the reference requests to start the deletion, and its steps describe cancelling a subscription rather than deleting the account."
+  },
+  {
+    "caseId": "bitext-11631",
+    "model": "openai/gpt-6-luna",
+    "score": 4,
+    "madeUp": false,
+    "reason": "The reply acknowledges the request and asks a sensible clarifying question (website or app) without inventing anything, but unlike the reference it doesn't ask for the account username or email needed to start the deletion, so it is slightly less helpful."
+  },
+  {
+    "caseId": "bitext-11965",
+    "model": "gemini-3.5-flash-lite",
+    "score": 2,
+    "madeUp": true,
+    "reason": "The reply never tells the customer where to find delivery options (the product page or checkout, as the reference says); instead it lists specific services, such as next-business-day Overnight Shipping and In-Store Pickup, that the reference doesn't support and that could mislead the customer."
+  },
+  {
+    "caseId": "bitext-11965",
+    "model": "openai/gpt-6-luna",
+    "score": 3,
+    "madeUp": true,
+    "reason": "The reply correctly sends the customer to checkout, but it leaves out the product page and the option to contact support, and it names specific services (express, same-day delivery in select areas, in-store pickup) that the reference doesn't support and that could mislead the customer."
+  },
+  {
+    "caseId": "bitext-13629",
+    "model": "gemini-3.5-flash-lite",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply gives the same correct guidance as the reference (enter the {{Order Number}} or {{Tracking Number}} in the website's tracking section to see real-time status and estimated delivery) and adds a helpful offer to track the shipment directly, with no misleading invented details."
+  },
+  {
+    "caseId": "bitext-13629",
+    "model": "openai/gpt-6-luna",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply gives the same steps as the reference: enter the {{Order Number}} or {{Tracking Number}} in the website's tracking section to see the shipment's progress and estimated delivery date, then offer more help, without inventing anything."
+  },
+  {
+    "caseId": "bitext-14501",
+    "model": "gemini-3.5-flash-lite",
+    "score": 4,
+    "madeUp": false,
+    "reason": "The reply covers the main step of logging into {{Online Company Portal Info}} to edit the platinum account and usefully asks what the customer wants to change, but it leaves out the reference's warning not to share private details like account numbers or passwords."
+  },
+  {
+    "caseId": "bitext-14501",
+    "model": "openai/gpt-6-luna",
+    "score": 4,
+    "madeUp": false,
+    "reason": "The reply covers the main step of logging into {{Online Company Portal Info}} and helpfully asks what the customer wants to change, but unlike the reference it doesn't warn against sharing private details like an account number or password, even as it invites the customer to share more in the chat."
+  },
+  {
+    "caseId": "bitext-15208",
+    "model": "gemini-3.5-flash-lite",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply covers every step in the reference (log in, open the Invoices section, filter or search by {{Person Name}}, view the matching invoices) and adds harmless general advice about opening or downloading an invoice, with no invented fees, deadlines or policies."
+  },
+  {
+    "caseId": "bitext-15208",
+    "model": "openai/gpt-6-luna",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply briefly covers the reference's main steps (log in, go to Invoices, search or filter by {{Person Name}}, open the invoice) and offers more help, and its small extras (filtering by date range, downloading) are general advice that won't mislead the customer."
+  },
+  {
+    "caseId": "bitext-16066",
+    "model": "gemini-3.5-flash-lite",
+    "score": 4,
+    "madeUp": true,
+    "reason": "The reply handles the request like the reference by acknowledging the customer's frustration and asking for the transaction details and supporting documents, but it claims that phone and website live-chat support exist, which the reference doesn't support."
+  },
+  {
+    "caseId": "bitext-16066",
+    "model": "openai/gpt-6-luna",
+    "score": 4,
+    "madeUp": true,
+    "reason": "The reply covers the reference's main points by acknowledging the refund request and asking for the reason, transaction details and supporting documents, but it doesn't ask about earlier communication with the company and it states phone and website live-chat support options that the reference doesn't support."
+  },
+  {
+    "caseId": "bitext-17771",
+    "model": "gemini-3.5-flash-lite",
+    "score": 5,
+    "madeUp": false,
+    "reason": "Like the reference, the reply acknowledges the cancellation request, apologizes and asks for the subscription email address to find the account, and its only additions are a harmless privacy reassurance and an optional feedback question."
+  },
+  {
+    "caseId": "bitext-17771",
+    "model": "openai/gpt-6-luna",
+    "score": 5,
+    "madeUp": false,
+    "reason": "Like the reference, the reply agrees to help and asks for the email address linked to the subscription so it can be found and cancelled, and it adds no invented fees, deadlines or policies."
+  },
+  {
+    "caseId": "bitext-18018",
+    "model": "gemini-3.5-flash-lite",
+    "score": 4,
+    "madeUp": false,
+    "reason": "The reply acknowledges the payment error and asks the customer for details, as the reference does, but it doesn't suggest useful examples like error messages or error codes, so it gives the customer slightly less guidance."
+  },
+  {
+    "caseId": "bitext-18018",
+    "model": "openai/gpt-6-luna",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply covers the same key step as the reference: it offers to help report the payment error and asks for the error message and when or where the payment failed, so the issue can be looked into, and it invents no policies or facts."
+  },
+  {
+    "caseId": "bitext-18858",
+    "model": "gemini-3.5-flash-lite",
+    "score": 4,
+    "madeUp": false,
+    "reason": "Like the reference, the reply asks for details about the payment error (using the {{Order Number}} placeholder), but it also tells the customer to contact support by phone, email or live chat even though they are already talking to support, so it is slightly less focused than the reference."
+  },
+  {
+    "caseId": "bitext-18858",
+    "model": "openai/gpt-6-luna",
+    "score": 4,
+    "madeUp": false,
+    "reason": "The reply asks for the error details the reference wants (what happened and any message shown), but it adds an unneeded line pointing the customer to phone, email or live chat; the reference doesn't confirm these channels, and the line is too general to count as a misleading made-up fact."
+  },
+  {
+    "caseId": "bitext-19637",
+    "model": "gemini-3.5-flash-lite",
+    "score": 5,
+    "madeUp": false,
+    "reason": "Like the reference, the reply offers help and asks for more details about the article so it can help with the purchase, and it invents nothing; it just leaves out examples of what to share, such as name, model or features, which is too minor to lower the score."
+  },
+  {
+    "caseId": "bitext-19637",
+    "model": "openai/gpt-6-luna",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply covers what the reference does: it offers help and asks which article the customer wants (by name or link) so it can guide the next steps, and it doesn't invent any facts."
+  },
+  {
+    "caseId": "bitext-20404",
+    "model": "gemini-3.5-flash-lite",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply covers every step in the reference: go to the right page, choose the reset option, verify identity, check the inbox and spam folder for the email, and follow its instructions, using placeholders correctly and adding only harmless general detail like entering an email address."
+  },
+  {
+    "caseId": "bitext-20404",
+    "model": "openai/gpt-6-luna",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply gives the same complete reset steps as the reference (go to the page, choose the forgot-key option, enter the account email, check inbox and spam, follow the instructions, ask for help if needed), keeps the placeholders and invents nothing misleading."
+  },
+  {
+    "caseId": "bitext-21631",
+    "model": "gemini-3.5-flash-lite",
+    "score": 4,
+    "madeUp": true,
+    "reason": "The reply covers the reference's key step by apologizing and asking for details about the sign-up issues, but it also invents a 'dedicated section for reporting sign-up problems' and phone, email and live chat channels that the reference doesn't support, and it confusingly sends the customer elsewhere right after asking them for details."
+  },
+  {
+    "caseId": "bitext-21631",
+    "model": "openai/gpt-6-luna",
+    "score": 5,
+    "madeUp": false,
+    "reason": "Like the reference, the reply apologizes and asks for more details, and it helpfully names which ones (the error message and the step where it failed); the mention of a 'Contact Us' page is general, harmless advice, not a specific made-up contact detail."
+  },
+  {
+    "caseId": "bitext-22316",
+    "model": "gemini-3.5-flash-lite",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply sends the customer to the website's \"Contact Us\" or \"Feedback\" section, the same as the reference, and its general mention of phone or email support gives no specific contact detail that could mislead."
+  },
+  {
+    "caseId": "bitext-22316",
+    "model": "openai/gpt-6-luna",
+    "score": 5,
+    "madeUp": false,
+    "reason": "Like the reference, the reply sends the customer to the \"Feedback\" or \"Contact Us\" section of the website, and its extra suggestion to reach support by email or phone is general advice with no specific details that could mislead."
+  },
+  {
+    "caseId": "bitext-23018",
+    "model": "gemini-3.5-flash-lite",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply covers the same key steps as the reference (log in, go to the account or profile section, find the add-address option, fill in the details, check them, save) and offers more help; it only leaves out minor points like the recipient name and optional delivery instructions, and it invents no specific facts."
+  },
+  {
+    "caseId": "bitext-23018",
+    "model": "openai/gpt-6-luna",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply covers every essential step in the reference (log in, go to My Account/Profile, open Shipping Addresses, add or edit an address, enter and check the details, save) and offers more help; it only leaves out the optional delivery-instructions step and the list of address fields, and it invents nothing."
+  },
+  {
+    "caseId": "bitext-24160",
+    "model": "gemini-3.5-flash-lite",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply gives the same five steps as the reference (log in, go to settings, find the upgrade option, choose the account type and confirm), uses placeholders correctly and adds no invented fees, deadlines or policies."
+  },
+  {
+    "caseId": "bitext-24160",
+    "model": "openai/gpt-6-luna",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply gives the same steps as the reference: sign in, open settings, find the upgrade or switch option, choose Pro and confirm, then offers more help, and it adds no fees, deadlines or policies the reference doesn't support."
+  },
+  {
+    "caseId": "bitext-24850",
+    "model": "gemini-3.5-flash-lite",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply gives the same five steps as the reference (log in, open Settings/Profile, find the upgrade option, choose the {{Account Type}} account, follow the prompts), keeps the placeholders and invents nothing."
+  },
+  {
+    "caseId": "bitext-24850",
+    "model": "openai/gpt-6-luna",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply covers the same five steps as the reference (sign in, open settings or profile, find an upgrade option, choose Pro, follow the prompts) and offers further help, without inventing fees, deadlines or contact details."
+  },
+  {
+    "caseId": "bitext-25306",
+    "model": "gemini-3.5-flash-lite",
+    "score": 2,
+    "madeUp": true,
+    "reason": "The reply mistakes a request to locate an order for one to modify it, and gives invented steps such as a 'Modify'/'Edit' option and going through checkout again; only the mention of finding the order in the 'Orders' section loosely helps with what the customer asked."
+  },
+  {
+    "caseId": "bitext-25306",
+    "model": "openai/gpt-6-luna",
+    "score": 2,
+    "madeUp": false,
+    "reason": "The customer asked to locate order {{Order Number}}, but the reply wrongly treats it as a request to change the order and never asks for the details needed to find it, as the reference does."
+  },
+  {
+    "caseId": "bitext-26389",
+    "model": "gemini-3.5-flash-lite",
+    "score": 4,
+    "madeUp": false,
+    "reason": "Like the reference, the reply asks for a reference number or other details so it can check the reimbursement status, but it also gives hedged, generic instructions to check 'My Orders' or 'My Account' on the website that the reference doesn't support and that may not match the real site, which is a small weakness."
+  },
+  {
+    "caseId": "bitext-26389",
+    "model": "openai/gpt-6-luna",
+    "score": 5,
+    "madeUp": false,
+    "reason": "The reply covers the customer's request as fully as the reference: it offers to help and asks for the reimbursement request number or order number to look up the status, without adding any made-up details."
+  }
+]
