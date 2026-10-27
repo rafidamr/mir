@@ -2,14 +2,9 @@
 
 This report covers the key points about the system design.
 
+
+## Architectural Overview
 ![Architecture](docs/architecture.png)
-
-<!-- TODO: add docs/architecture.png -->
-
-**Live:**
-- console: https://mir-console.vercel.app
-- gateway: https://mir-gateway-143244922679.asia-southeast1.run.app
-- repository: https://github.com/rafidamr/mir
 
 
 ## 1. The request path
@@ -34,37 +29,7 @@ This report covers the key points about the system design.
 
 `GET /v1/usage` returns the tenant's quota, requests used and remaining, total cost, and its 20 most recent requests. The console's usage page is built on it.
 
-## 2. Routing rules
-
-There are two real backends: Gemini 3.5 Flash-Lite, called directly at Google, and GPT-6 Luna, called through OpenRouter. For each request:
-
-1. **The tenant's privacy choice comes first.** Each tenant either allows its data to be used for training or doesn't, and each model is marked by whether its provider may train on what it's sent. A tenant that says no never reaches a model that may train, because tenants should decide what happens to their data. Gemini's free tier may train on data, so `tenant2`, which says no, is served only by Luna.
-2. **Then the cheapest model goes first,** by the sum of its prices, to keep spending down. Gemini costs $0 on the free tier, so it goes first, and Luna is the backup.
-3. **A switch happens only before the answer shows.** The router reads the first 40 characters before passing anything on. It moves to the next model if the current one:
-   - errors;
-   - takes more than 3 seconds to start;
-   - starts with nothing, or with junk (fewer than half of the visible characters are letters).
-
-   After that, the answer belongs to the customer and is never switched. The last model in line isn't cut off at 3 seconds, since there's nothing left to switch to.
-4. **A model that fails 3 times in a row is skipped for 60 seconds.** The count is per model and shared by all tenants, so other requests don't wait on a model that's down. One success resets it.
-5. **Limits stop spending:** there's a 30-second limit per answer, and when the customer cuts the stream, the model call is stopped, so no more tokens are paid for.
-6. **Every switch is recorded.** The reason for each model passed over, such as `gemini-3.5-flash-lite: too slow: no answer within 3 s`, is saved in the request's row and shown in the console. If every model fails, the error lists each model's reason.
-
-## 3. The models
-
-| | Gemini 3.5 Flash-Lite | GPT-6 Luna |
-|---|---|---|
-| Role | First, because it's the cheapest | Backup; the only model for tenants that don't allow training |
-| Price per million tokens, in / out | $0 on the free tier | $0.10 / $0.50 |
-| May train on what it's sent | Yes (free tier) | No: OpenRouter is told to use only providers that keep no data |
-| Thinking | Low | Off |
-| Provider | Google | The fastest of OpenRouter's providers that keep no data (OpenAI or Azure in our runs) |
-
-- **Both are on par for customer support answers.** They averaged 4.27 and 4.38 out of 5 in the test run (section 5).
-- **Answer length:** both are asked to write under 200 words, about the length of a typical Bitext reply. The hard limit is a 500-token cap, which the vendor itself enforces. Thinking tokens count towards the cap and are billed as output.
-- **Settings:** each model's settings come from the environment as JSON: its id, whether it may train, its thinking level and its prices. So a model can be swapped without changing code.
-
-## 4. Retrieval and the assistant
+## 2. Retrieval and the assistant
 
 - **Knowledge base:** 2,000 Bitext question-and-reply pairs covering all 27 intents, about 74 each.
 - **Search:**
@@ -81,6 +46,36 @@ There are two real backends: Gemini 3.5 Flash-Lite, called directly at Google, a
   - The model gets the intent and up to 3 replies with that intent from the knowledge base.
   - It's told to keep placeholders like `{{Order Number}}` and not to make up policies, prices or dates.
   - The intent comes from the lookup, not the model, so it's the same whichever model answers, and there's nothing to parse.
+
+## 3. Routing rules
+
+There are two real backends: Gemini 3.5 Flash-Lite, called directly at Google, and GPT-6 Luna, called through OpenRouter. For each request:
+
+1. **The tenant's privacy choice comes first.** Each tenant either allows its data to be used for training or doesn't, and each model is marked by whether its provider may train on what it's sent. A tenant that says no never reaches a model that may train, because tenants should decide what happens to their data. Gemini's free tier may train on data, so `tenant2`, which says no, is served only by Luna.
+2. **Then the cheapest model goes first,** by the sum of its prices, to keep spending down. Gemini costs $0 on the free tier, so it goes first, and Luna is the backup.
+3. **A switch happens only before the answer shows.** The router reads the first 40 characters before passing anything on. It moves to the next model if the current one:
+   - errors;
+   - takes more than 3 seconds to start;
+   - starts with nothing, or with junk (fewer than half of the visible characters are letters).
+
+   After that, the answer belongs to the customer and is never switched. The last model in line isn't cut off at 3 seconds, since there's nothing left to switch to.
+4. **A model that fails 3 times in a row is skipped for 60 seconds.** The count is per model and shared by all tenants, so other requests don't wait on a model that's down. One success resets it.
+5. **Limits stop spending:** there's a 30-second limit per answer, and when the customer cuts the stream, the model call is stopped, so no more tokens are paid for.
+6. **Every switch is recorded.** The reason for each model passed over, such as `gemini-3.5-flash-lite: too slow: no answer within 3 s`, is saved in the request's row and shown in the console. If every model fails, the error lists each model's reason.
+
+## 4. The models
+
+| | Gemini 3.5 Flash-Lite | GPT-6 Luna |
+|---|---|---|
+| Role | First, because it's the cheapest | Backup; the only model for tenants that don't allow training |
+| Price per million tokens, in / out | $0 on the free tier | $0.10 / $0.50 |
+| May train on what it's sent | Yes (free tier) | No: OpenRouter is told to use only providers that keep no data |
+| Thinking | Low | Off |
+| Provider | Google | The fastest of OpenRouter's providers that keep no data (OpenAI or Azure in our runs) |
+
+- **Both are on par for customer support answers.** They averaged 4.27 and 4.38 out of 5 in the test run (section 5).
+- **Answer length:** both are asked to write under 200 words, about the length of a typical Bitext reply. The hard limit is a 500-token cap, which the vendor itself enforces. Thinking tokens count towards the cap and are billed as output.
+- **Settings:** each model's settings come from the environment as JSON: its id, whether it may train, its thinking level and its prices. So a model can be swapped without changing code.
 
 ## 5. The test run
 
@@ -139,3 +134,4 @@ Even at 0.80, the closest match is the same sentence with typos: "I do not know 
 - **No console login.** The console is made simple. But the tenants' full keys stay on its server, and the browser only ever sees "mir_XXXX…".
 - **The quota counts requests, not money.** It's enough to show how the quota works.
 - **Cost is recorded at the configured price.** OpenRouter's actual bill may change from the configured price in the future.
+- **Code Refactoring.** The codebase could be made simpler and more efficient

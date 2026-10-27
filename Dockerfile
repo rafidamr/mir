@@ -2,8 +2,7 @@
 FROM node:24-slim
 WORKDIR /app
 
-# Only the gateway's runtime packages. Install scripts stay off: the one that matters
-# (onnxruntime-node) would only download GPU add-ons, and Cloud Run has no GPU.
+# Only the gateway's runtime packages.
 COPY package.json package-lock.json ./
 COPY apps/gateway/package.json apps/gateway/
 RUN npm ci --omit=dev --ignore-scripts --workspace @mir/gateway
