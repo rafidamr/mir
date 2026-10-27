@@ -11,14 +11,12 @@ export interface Tokens {
   inputTokens: number
   /** All output tokens, including hidden "thinking" (reasoning) tokens. */
   outputTokens: number
-  reasoningTokens: number
 }
 
 /** US dollars per million tokens. */
 export interface ModelCost {
   input: number
   output: number
-  reasoning: number
 }
 
 export interface LLMClient {

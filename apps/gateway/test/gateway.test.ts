@@ -41,7 +41,7 @@ describe('the whole gateway', () => {
     const { apiKey } = await addTenant(db)
     const slow = fakeModel('free', [], { end: 'hang', trainingAllowed: true })
     const backup = fakeModel('paid', goodAnswer, {
-      cost: { input: 0.3, output: 2.5, reasoning: 2.5 },
+      cost: { input: 0.3, output: 2.5 },
     })
     const events = await readEvents(await ask(gateway([slow, backup]), apiKey))
 

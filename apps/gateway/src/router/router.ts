@@ -67,7 +67,7 @@ export function createRouter({
       controller.abort()
     }
     const events = model.call(request.prompt, signal)[Symbol.asyncIterator]()
-    let tokens: Tokens = { inputTokens: 0, outputTokens: 0, reasoningTokens: 0 }
+    let tokens: Tokens = { inputTokens: 0, outputTokens: 0 }
     let firstWords = ''
     let finished = false
 
@@ -119,9 +119,7 @@ export function createRouter({
 }
 
 /** Tokens times the model's prices, rounded to 8 decimals like the database column. */
-export function costOf(cost: ModelCost, { inputTokens, outputTokens, reasoningTokens }: Tokens) {
-  const answerTokens = outputTokens - reasoningTokens
-  const dollars =
-    (inputTokens * cost.input + answerTokens * cost.output + reasoningTokens * cost.reasoning) / 1e6
+export function costOf(cost: ModelCost, { inputTokens, outputTokens }: Tokens) {
+  const dollars = (inputTokens * cost.input + outputTokens * cost.output) / 1e6
   return { inputTokens, outputTokens, costUsd: Math.round(dollars * 1e8) / 1e8 }
 }

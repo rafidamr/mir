@@ -20,7 +20,7 @@ function fake(
   let calls = 0
   return {
     id,
-    cost: { input: 0.3, output: 2.5, reasoning: 2.5 },
+    cost: { input: 0.3, output: 2.5 },
     trainingAllowed: false,
     get calls() {
       return calls
@@ -30,14 +30,14 @@ function fake(
       for (const text of pieces) yield { type: 'text' as const, text }
       if (end === 'hang') await untilStopped(signal)
       if (end instanceof Error) throw end
-      yield { type: 'usage' as const, inputTokens: 1200, outputTokens: 150, reasoningTokens: 50 }
+      yield { type: 'usage' as const, inputTokens: 1200, outputTokens: 150 }
     },
     ...extra,
   }
 }
 const free = (pieces: string[], end?: 'finish' | 'hang' | Error) =>
   fake('free', pieces, end, {
-    cost: { input: 0, output: 0, reasoning: 0 },
+    cost: { input: 0, output: 0 },
     trainingAllowed: true,
   })
 const paid = (pieces: string[], end?: 'finish' | 'hang' | Error) => fake('paid', pieces, end)
@@ -129,7 +129,7 @@ describe('router', () => {
   it('works out the cost from the tokens and the prices', async () => {
     const routed = await createRouter({ llmClients: [paid(answer)] }).route(request)
     await readAll(routed.text)
-    // 1,200 × $0.30 + 100 answer tokens × $2.50 + 50 reasoning tokens × $2.50, per million.
+    // 1,200 input tokens × $0.30 + 150 output tokens (thinking included) × $2.50, per million.
     expect(routed.usage()).toEqual({ inputTokens: 1200, outputTokens: 150, costUsd: 0.000735 })
   })
 
@@ -172,7 +172,8 @@ describe('createModels', () => {
     const setting = (id: string, price: number, trainingAllowed: boolean) => ({
       id,
       training_allowed: trainingAllowed,
-      cost: { input: price, output: price, reasoning: price },
+      reasoning: 'low' as const,
+      cost: { input: price, output: price },
     })
     const models = createLLMClients({
       DATABASE_URL: 'postgres://localhost/x',

@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 /**
  * A model's settings, given as JSON: its id, whether its provider may train on what it's sent,
- * and its prices in US dollars per million tokens.
+ * how much it thinks before answering, and its prices in US dollars per million tokens.
  */
 const ModelSetting = z
   .string()
@@ -18,13 +18,16 @@ const ModelSetting = z
     z.object({
       id: z.string().min(1),
       training_allowed: z.boolean(),
+      reasoning: z.enum(['none', 'minimal', 'low', 'medium', 'high', 'xhigh']),
       cost: z.object({
         input: z.number().nonnegative(),
-        output: z.number().nonnegative(),
-        reasoning: z.number().nonnegative(),
+
+        output: z.number().nonnegative(), // Hidden thinking tokens are billed as output.
       }),
     }),
   )
+
+export type ModelSettings = z.infer<typeof ModelSetting>
 
 const Env = z.object({
   DATABASE_URL: z.url(),

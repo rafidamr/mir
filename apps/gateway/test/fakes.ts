@@ -64,7 +64,7 @@ export function fakeModel(
   const signals: AbortSignal[] = []
   const model: LLMClient & { prompts: Prompt[]; signals: AbortSignal[] } = {
     id,
-    cost: options.cost ?? { input: 0, output: 0, reasoning: 0 },
+    cost: options.cost ?? { input: 0, output: 0 },
     trainingAllowed: options.trainingAllowed ?? false,
     prompts,
     signals,
@@ -74,7 +74,7 @@ export function fakeModel(
       for (const text of pieces) yield { type: 'text', text }
       if (options.end === 'hang') await untilStopped(signal)
       if (options.end instanceof Error) throw options.end
-      yield { type: 'usage', inputTokens: 10, outputTokens: 5, reasoningTokens: 0 }
+      yield { type: 'usage', inputTokens: 10, outputTokens: 5 }
     },
   }
   return model

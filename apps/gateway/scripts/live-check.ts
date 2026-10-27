@@ -30,7 +30,7 @@ for (const model of models) {
     const sample = await ask(model, 'I want to cancel my order. How do I do that?')
     console.log(`  first words after ${sample.firstWordsMs} ms`)
     console.log(
-      `  tokens: ${sample.tokens.inputTokens} in, ${sample.tokens.outputTokens} out (${sample.tokens.reasoningTokens} of them reasoning); cost $${costOf(model.cost, sample.tokens).costUsd}`,
+      `  tokens: ${sample.tokens.inputTokens} in, ${sample.tokens.outputTokens} out (thinking included); cost $${costOf(model.cost, sample.tokens).costUsd}`,
     )
     console.log(`  answer: ${sample.text.slice(0, 200).replace(/\s+/g, ' ')}`)
 
@@ -49,7 +49,7 @@ async function ask(model: LLMClient, question: string) {
   const started = performance.now()
   let firstWordsMs = 0
   let text = ''
-  let tokens: Tokens = { inputTokens: 0, outputTokens: 0, reasoningTokens: 0 }
+  let tokens: Tokens = { inputTokens: 0, outputTokens: 0 }
   const prompt = { instructions: INSTRUCTIONS, message: question }
   for await (const event of model.call(prompt, new AbortController().signal)) {
     if (event.type === 'text') {

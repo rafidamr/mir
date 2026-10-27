@@ -1,13 +1,13 @@
 import { createGoogle } from '@ai-sdk/google'
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
 import { type LanguageModel, streamText } from 'ai'
-import type { Config } from '../config.ts'
+import type { Config, ModelSettings } from '../config.ts'
 import type { LLMClient } from './types.ts'
 
 /** The longest answer a model may write, in tokens. */
 const MAX_ANSWER_TOKENS = 500
 
-/** The models, cheapest first sorted by the sum of their three prices. */
+/** The models, cheapest first sorted by the sum of their prices. */
 export function createLLMClients(config: Config): LLMClient[] {
   const openRouter = createOpenRouter({ apiKey: config.OPENROUTER_API_KEY })
   const google = createGoogle({ apiKey: config.GEMINI_API_KEY })
@@ -16,24 +16,36 @@ export function createLLMClients(config: Config): LLMClient[] {
       id: config.GEMINI_MODEL.id,
       cost: config.GEMINI_MODEL.cost,
       trainingAllowed: config.GEMINI_MODEL.training_allowed,
-      call: callAiSdk(google(config.GEMINI_MODEL.id)),
+      call: callAiSdk(google(config.GEMINI_MODEL.id), config.GEMINI_MODEL.reasoning),
     },
     {
       id: config.OPENROUTER_MODEL.id,
       cost: config.OPENROUTER_MODEL.cost,
       trainingAllowed: config.OPENROUTER_MODEL.training_allowed,
-      call: callAiSdk(openRouter.chat(config.OPENROUTER_MODEL.id)),
+      call: callAiSdk(
+        // This connector reads the thinking level from its own settings, not the AI SDK's.
+        openRouter.chat(config.OPENROUTER_MODEL.id, {
+          reasoning: { effort: config.OPENROUTER_MODEL.reasoning },
+          provider: {
+            sort: 'latency',
+            ...(config.OPENROUTER_MODEL.training_allowed ? {} : { data_collection: 'deny' }),
+          },
+        }),
+      ),
     },
   ]
   return clients.sort((a, b) => totalPrice(a) - totalPrice(b))
 }
 
 function totalPrice({ cost }: LLMClient): number {
-  return cost.input + cost.output + cost.reasoning
+  return cost.input + cost.output
 }
 
 /** Calls a model through the Vercel AI SDK, passing on its text and token counts. */
-export function callAiSdk(model: LanguageModel): LLMClient['call'] {
+export function callAiSdk(
+  model: LanguageModel,
+  reasoning?: ModelSettings['reasoning'],
+): LLMClient['call'] {
   return async function* ({ instructions, message }, signal) {
     const result = streamText({
       model,
@@ -41,6 +53,7 @@ export function callAiSdk(model: LanguageModel): LLMClient['call'] {
       prompt: message,
       abortSignal: signal,
       maxOutputTokens: MAX_ANSWER_TOKENS,
+      reasoning,
       // The router switches to another model instead of retrying this one.
       maxRetries: 0,
       // Errors arrive in the stream below.
@@ -54,7 +67,6 @@ export function callAiSdk(model: LanguageModel): LLMClient['call'] {
           type: 'usage',
           inputTokens: usage.inputTokens ?? 0,
           outputTokens: usage.outputTokens ?? 0,
-          reasoningTokens: usage.outputTokenDetails.reasoningTokens ?? 0,
         }
       }
       if (part.type === 'error') throw part.error
