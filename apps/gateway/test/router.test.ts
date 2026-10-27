@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { createLLMClients } from '../src/router/llm-clients.ts'
 import { AllModelsFailedError, createRouter } from '../src/router/router.ts'
 import type { LLMClient } from '../src/router/types.ts'
+import { untilStopped } from './fakes.ts'
 
 const request = {
   prompt: { instructions: 'You are a support assistant.', message: 'I want to cancel my order' },
@@ -27,11 +28,7 @@ function fake(
     async *call(_prompt: unknown, signal: AbortSignal) {
       calls++
       for (const text of pieces) yield { type: 'text' as const, text }
-      if (end === 'hang') {
-        await new Promise((_, reject) =>
-          signal.addEventListener('abort', () => reject(new Error('stopped'))),
-        )
-      }
+      if (end === 'hang') await untilStopped(signal)
       if (end instanceof Error) throw end
       yield { type: 'usage' as const, inputTokens: 1200, outputTokens: 150, reasoningTokens: 50 }
     },
@@ -156,6 +153,16 @@ describe('router', () => {
       totalTimeoutMs: 100,
     })
     const routed = await router.route(request)
+    await expect(readAll(routed.text)).rejects.toThrow('stopped')
+  })
+
+  it('stops the model straight away when the customer has already left', async () => {
+    const left = new AbortController()
+    left.abort()
+    const router = createRouter({
+      llmClients: [free(['Sure, I can help you cancel your order. '], 'hang')],
+    })
+    const routed = await router.route({ ...request, signal: left.signal })
     await expect(readAll(routed.text)).rejects.toThrow('stopped')
   })
 })

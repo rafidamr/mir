@@ -56,13 +56,17 @@ export function createRouter({
    */
   async function start(model: LLMClient, request: RouterRequest, timeToStartMs: number) {
     const controller = new AbortController()
-    request.signal?.addEventListener('abort', () => controller.abort(), { once: true })
+    // Stops the model when either the router or the customer says so, even if the customer has
+    // already left before the model starts.
+    const signal = request.signal
+      ? AbortSignal.any([controller.signal, request.signal])
+      : controller.signal
     const totalTimer = setTimeout(() => controller.abort(), totalTimeoutMs)
     const stop = () => {
       clearTimeout(totalTimer)
       controller.abort()
     }
-    const events = model.call(request.prompt, controller.signal)[Symbol.asyncIterator]()
+    const events = model.call(request.prompt, signal)[Symbol.asyncIterator]()
     let tokens: Tokens = { inputTokens: 0, outputTokens: 0, reasoningTokens: 0 }
     let firstWords = ''
     let finished = false
