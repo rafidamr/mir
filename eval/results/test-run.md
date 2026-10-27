@@ -69,7 +69,7 @@ Speed and cost cover the answered test questions. Times are measured inside the 
 
 **Grade:** 5. The reply asks for the same details as the reference (full name, email address and username), says it will guide the customer through the next steps, and reassures them about privacy without adding anything that isn't supported.
 
-**You agree:** yes / no
+**You agree:** yes / ~~no~~
 
 ### 2. bitext-15208, gemini-3.5-flash-lite
 
@@ -81,7 +81,7 @@ Speed and cost cover the answered test questions. Times are measured inside the 
 
 **Grade:** 5. The reply covers every step in the reference (log in, open the Invoices section, filter or search by {{Person Name}}, view the matching invoices) and adds harmless general advice about opening or downloading an invoice, with no invented fees, deadlines or policies.
 
-**You agree:** yes / no
+**You agree:** yes / ~~no~~
 
 ### 3. bitext-07232, gemini-3.5-flash-lite
 
@@ -93,7 +93,7 @@ Speed and cost cover the answered test questions. Times are measured inside the 
 
 **Grade:** 5. The reply covers everything the reference does: it acknowledges the customer's frustration, apologizes, says complaints are taken seriously and asks for details (dates, names, {{Order Number}}) to move the complaint forward, and it invents no fees, deadlines or policies.
 
-**You agree:** yes / no
+**You agree:** yes / ~~no~~
 
 ### 4. bitext-10472, gemini-3.5-flash-lite
 
@@ -105,7 +105,7 @@ Speed and cost cover the answered test questions. Times are measured inside the 
 
 **Grade:** 5. The reply asks for the same details as the reference (full name, email address and preferred username), promises step-by-step guidance and reassures the customer about privacy, without inventing any facts.
 
-**You agree:** yes / no
+**You agree:** yes / ~~no~~
 
 ### 5. bitext-21631, openai/gpt-6-luna
 
@@ -117,7 +117,7 @@ Speed and cost cover the answered test questions. Times are measured inside the 
 
 **Grade:** 5. Like the reference, the reply apologizes and asks for more details, and it helpfully names which ones (the error message and the step where it failed); the mention of a 'Contact Us' page is general, harmless advice, not a specific made-up contact detail.
 
-**You agree:** yes / no
+**You agree:** yes / ~~no~~
 
 ### 6. bitext-24850, gemini-3.5-flash-lite
 
@@ -129,7 +129,7 @@ Speed and cost cover the answered test questions. Times are measured inside the 
 
 **Grade:** 5. The reply gives the same five steps as the reference (log in, open Settings/Profile, find the upgrade option, choose the {{Account Type}} account, follow the prompts), keeps the placeholders and invents nothing.
 
-**You agree:** yes / no
+**You agree:** yes / ~~no~~
 
 ### 7. bitext-05325, gemini-3.5-flash-lite
 
@@ -141,7 +141,7 @@ Speed and cost cover the answered test questions. Times are measured inside the 
 
 **Grade:** 3, made something up. The reply lists the correct payment methods and mentions the checkout page, but its main answer to "where" points to a made-up "Payment Options" section under a Help tab, and it names card brands (Visa, Mastercard, American Express) that the reference doesn't confirm and that could mislead the customer.
 
-**You agree:** yes / no
+**You agree:** yes / ~~no~~
 
 ### 8. bitext-00480, gemini-3.5-flash-lite
 
@@ -153,7 +153,7 @@ Speed and cost cover the answered test questions. Times are measured inside the 
 
 **Grade:** 5. The reply covers every part of the reference: the same five cancellation steps (sign in, go to the orders section, find the order, choose the cancel option, follow any further prompts) and the same support hours, phone and live chat options, using the correct placeholders and adding no unsupported facts.
 
-**You agree:** yes / no
+**You agree:** yes / ~~no~~
 
 ### 9. bitext-18858, gemini-3.5-flash-lite
 
@@ -165,7 +165,7 @@ Speed and cost cover the answered test questions. Times are measured inside the 
 
 **Grade:** 4. Like the reference, the reply asks for details about the payment error (using the {{Order Number}} placeholder), but it also tells the customer to contact support by phone, email or live chat even though they are already talking to support, so it is slightly less focused than the reference.
 
-**You agree:** yes / no
+**You agree:** ~~yes~~ / no
 
 ### 10. bitext-17771, openai/gpt-6-luna
 
@@ -177,5 +177,5 @@ Speed and cost cover the answered test questions. Times are measured inside the 
 
 **Grade:** 5. Like the reference, the reply agrees to help and asks for the email address linked to the subscription so it can be found and cancelled, and it adds no invented fees, deadlines or policies.
 
-**You agree:** yes / no
+**You agree:** yes / ~~no~~
 
