@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "npm ci --workspace @mir/console --include-workspace-root",
+  "regions": ["sin1"]
+}
