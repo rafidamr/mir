@@ -389,6 +389,10 @@ th {
   background: var(--panel);
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
 /* Narrow screens: details below the conversation */
 
 @media (max-width: 900px) {

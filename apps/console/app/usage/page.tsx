@@ -71,7 +71,7 @@ export default async function UsagePage() {
             <table>
               <thead>
                 <tr>
-                  <th>Time (UTC)</th>
+                  <th>Time (UTC+7)</th>
                   <th>Outcome</th>
                   <th>Model</th>
                   <th>Switched because</th>
@@ -83,11 +83,11 @@ export default async function UsagePage() {
               <tbody>
                 {usage.recent.map((r) => (
                   <tr key={r.id}>
-                    <td>{r.createdAt.slice(0, 19).replace('T', ' ')}</td>
+                    <td>{inUtcPlus7(r.createdAt)}</td>
                     <td>{r.outcome}</td>
                     <td>{r.model ?? '—'}</td>
                     <td>{r.fallbackReason ?? '—'}</td>
-                    <td>
+                    <td className="nowrap">
                       {r.inputTokens} in / {r.outputTokens} out
                     </td>
                     <td>${r.costUsd.toFixed(6)}</td>
@@ -101,6 +101,12 @@ export default async function UsagePage() {
       )}
     </main>
   )
+}
+
+/** A time in UTC+7 (WIB). */
+function inUtcPlus7(iso: string): string {
+  const sevenHours = 7 * 60 * 60 * 1000
+  return new Date(Date.parse(iso) + sevenHours).toISOString().slice(0, 19).replace('T', ' ')
 }
 
 /** The tenant's usage, or a message saying what went wrong. */
