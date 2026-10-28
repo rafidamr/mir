@@ -23,7 +23,7 @@ This report covers the key points about the system design.
 5. **Recording.** Each request gets one row, holding:
    - the tenant and the outcome (answered, refused or failed);
    - the model, and why the router switched models, if it did;
-   - input and output tokens, the cost in US dollars and the latency.
+   - input and output tokens as the model's provider reports them (thinking counts as output), the cost in US dollars (input and output tokens × the model's price per million tokens), and the latency (from the gateway starting on the request to the last piece of the answer sent).
 
    If saving the row fails, the error is logged rather than sent to the caller, because the answer already exists and the quota is already counted.
 
@@ -38,6 +38,7 @@ This report covers the key points about the system design.
   - At this size the exact search takes under a millisecond (0.91 ms), and turning a message into numbers about 2.5 ms, so no vector database is needed.
 - **Intent and confidence:**
   - The 5 closest entries vote on the intent, each vote weighted by its similarity, and the confidence is the winning intent's share of the vote. It's a simple method that works well.
+  - The formula: confidence = (sum of the similarities of the matches with the winning intent) ÷ (sum of the similarities of all 5 matches). It runs from 0 to 1, and all 5 agreeing gives 1.0. For example, 3 cancel_order matches at 0.96, 0.95 and 0.94, against 2 other intents at 0.92 and 0.90, give confidence 2.85 ÷ 4.67 = 0.61.
   - On the 270 practice questions it picked the right intent 98.1% of the time.
 - **Refusing before any model call:** when the closest entry is below 0.75 similarity (off-topic), or the confidence is below 0.40 (unsure), the assistant refuses and offers a human agent. A refusal costs nothing and takes milliseconds. Both cut-offs are generous, which leaves the LLMs room to answer:
   - 0.75 sits halfway between the highest off-topic practice message (0.733) and the lowest real practice question (0.767).
