@@ -29,7 +29,7 @@ You need Node.js 24 and Docker.
    npm install
    docker compose up -d db
    ```
-2. Copy `.env.example` to `.env`, and fill in `GEMINI_API_KEY` and `OPENROUTER_API_KEY`.
+2. Copy `apps/gateway/.env.example` to `apps/gateway/.env`, and fill in `GEMINI_API_KEY` and `OPENROUTER_API_KEY`.
 3. Create the tables and the demo tenants. The seed prints each tenant's API key; keys are stored only as hashes, so that's the only time you'll see them.
    ```sh
    npm run db:migrate -w @mir/gateway
@@ -61,7 +61,7 @@ You need Node.js 24 and Docker.
 | `npm run lint`, `npm run typecheck` | Biome and TypeScript checks |
 | `npm run eval` | The final test run: both models answer the 30 test questions and 6 off-topic messages |
 | `npm run grade` | Grades the test run's answers with Claude Opus 5.5, through Claude Code subscription |
-| `npm run check-deployment -- <gateway URL> [console URL]` | Checks against the live system covering multiple query types, routing rule, endpoints, and console pages. Needs `.env.production` and the live keys in `.cache/live-keys.txt`. |
+| `npm run check-deployment -- <gateway URL> [console URL]` | Checks against the live system covering multiple query types, routing rule, endpoints, and console pages. Needs `apps/gateway/.env.production` and the live keys in `.cache/live-keys.txt`. |
 | `npm run data:prepare`, `npm run data:benchmark` | Rebuild the data split and the knowledge base, and rerun the lookup benchmark |
 
 ## Current Deployment
